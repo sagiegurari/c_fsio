@@ -65,6 +65,12 @@ utils_setup_c_test(
     write_text_file_content
     write_text_file_overwrite
     read_text_file_not_found
+    dir_exists_null
+    dir_exists_file
+    dir_exists_dir
+    dir_exists_not_found
+    mkdir_null
+    mkdirs_null
   ADDITIONAL_SOURCES "${COMMON_TEST_SOURCES}"
   COMPILATION_FLAGS "${X_CMAKE_C_FLAGS}"
   BINARY_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
