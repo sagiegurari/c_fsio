@@ -29,7 +29,7 @@ macro(add_external_lib)
     LIBRARY_PARENT_DIRECTORY target
   )
 endmacro(add_external_lib)
-add_external_lib("string_buffer" "v0.1.2")
+add_external_lib("string_buffer" "v0.1.3")
 
 include_directories(include "${STRING_BUFFER_INCLUDE}")
 
