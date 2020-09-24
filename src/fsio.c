@@ -1,6 +1,8 @@
 #include "fsio.h"
 #include "string_buffer.h"
+#include <errno.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 
 bool fsio_write_text_file(char *file, char *text)
@@ -54,3 +56,17 @@ char *fsio_read_text_file(char *file)
 
   return(text);
 }
+
+
+bool fsio_mkdir(char *directory, mode_t mode)
+{
+  int result = mkdir(directory, mode);
+
+  if (result == 0 || result == EEXIST)
+  {
+    return(true);
+  }
+
+  return(false);
+}
+
