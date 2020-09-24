@@ -21,7 +21,7 @@ char *fsio_read_text_file(char * /*file*/);
  * This function will return true if the directory was created or
  * if it already exists.
  */
-bool fsio_mkdir(char * /* directory */, mode_t /*mode*/);
+bool fsio_mkdir(char *directory, mode_t mode);
 
 #endif
 
