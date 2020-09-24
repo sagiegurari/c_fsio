@@ -133,13 +133,14 @@ bool _write_text_file(char *file, char *text, char *mode)
     return(false);
   }
 
-  char *file_clone = strdup(file);
-  char *directory  = dirname(file_clone);
-  if (!fsio_mkdirs(directory, S_IRWXU | S_IRWXG))
+  char *file_clone       = strdup(file);
+  char *directory        = dirname(file_clone);
+  bool directory_created = fsio_mkdirs(directory, S_IRWXU | S_IRWXG);
+  free(file_clone);
+  if (!directory_created)
   {
     return(false);
   }
-  free(file_clone);
 
   FILE *fp = fopen(file, mode);
   if (fp == NULL)
