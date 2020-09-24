@@ -12,6 +12,13 @@
 bool fsio_write_text_file(char * /* file */, char * /* text */);
 
 /**
+ * Writes the provided text into the file, appending if file already exists.
+ * In case of any error or invalid input, this function will return false.
+ * If parent directories do not exist, they will be created.
+ */
+bool fsio_append_text_file(char * /* file */, char * /* text */);
+
+/**
  * Reads and returns the text from the provided file.
  * In case of any error or invalid input, this function will return NULL.
  */

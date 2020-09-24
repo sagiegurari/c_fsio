@@ -63,7 +63,10 @@ utils_setup_c_test(
     write_text_file_dir_not_exists
     write_text_file_empty
     write_text_file_content
+    write_text_file_long_content
     write_text_file_overwrite
+    write_text_file_stress
+    append_text_file_content
     read_text_file_not_found
     dir_exists_null
     dir_exists_file

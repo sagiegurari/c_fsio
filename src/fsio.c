@@ -8,40 +8,18 @@
 #include <sys/stat.h>
 
 
+bool write_text_file(char *, char *, char *);
+
+
 bool fsio_write_text_file(char *file, char *text)
 {
-  if (file == NULL || text == NULL)
-  {
-    return(false);
-  }
+  return(write_text_file(file, text, "w"));
+}
 
-  char *file_clone = strdup(file);
-  char *directory  = dirname(file_clone);
-  if (!fsio_mkdirs(directory, S_IRWXU | S_IRWXG))
-  {
-    return(false);
-  }
-  free(file_clone);
 
-  FILE *fp = fopen(file, "w");
-  if (fp == NULL)
-  {
-    return(false);
-  }
-
-  if (fputs(text, fp) == EOF)
-  {
-    fclose(fp);
-
-    // prevent partially written file to be
-    remove(file);
-
-    return(false);
-  }
-
-  fclose(fp);
-
-  return(true);
+bool fsio_append_text_file(char *file, char *text)
+{
+  return(write_text_file(file, text, "a"));
 }
 
 
@@ -145,5 +123,42 @@ bool fsio_mkdirs(char *directory, mode_t mode)
   free(directory_mutable);
 
   return(fsio_mkdir(directory, mode));
+}
+
+
+bool write_text_file(char *file, char *text, char *mode)
+{
+  if (file == NULL || text == NULL)
+  {
+    return(false);
+  }
+
+  char *file_clone = strdup(file);
+  char *directory  = dirname(file_clone);
+  if (!fsio_mkdirs(directory, S_IRWXU | S_IRWXG))
+  {
+    return(false);
+  }
+  free(file_clone);
+
+  FILE *fp = fopen(file, mode);
+  if (fp == NULL)
+  {
+    return(false);
+  }
+
+  if (fputs(text, fp) == EOF)
+  {
+    fclose(fp);
+
+    // prevent partially written file to be
+    remove(file);
+
+    return(false);
+  }
+
+  fclose(fp);
+
+  return(true);
 }
 
