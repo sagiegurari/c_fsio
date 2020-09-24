@@ -7,6 +7,7 @@
 /**
  * Writes the provided text into the file, deleting any previous content.
  * In case of any error or invalid input, this function will return false.
+ * If parent directories do not exist, they will be created.
  */
 bool fsio_write_text_file(char * /* file */, char * /* text */);
 
@@ -17,11 +18,24 @@ bool fsio_write_text_file(char * /* file */, char * /* text */);
 char *fsio_read_text_file(char * /*file*/);
 
 /**
+ * Returns true if the provided path exists and is a directory.
+ */
+bool fsio_dir_exists(char * /* directory */);
+
+/**
  * Creates a new directory.
  * This function will return true if the directory was created or
  * if it already exists.
  */
-bool fsio_mkdir(char *directory, mode_t mode);
+bool fsio_mkdir(char * /* directory */, mode_t /*mode*/);
+
+/**
+ * Creates a new directory, including any needed parent directory.
+ * This function will return true if the directory was created or
+ * if it already exists.
+ */
+bool fsio_mkdirs(char * /* directory */, mode_t /*mode*/);
+
 
 #endif
 

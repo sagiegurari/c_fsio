@@ -1,7 +1,10 @@
 #include "fsio.h"
 #include "string_buffer.h"
 #include <errno.h>
+#include <libgen.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 
 
@@ -12,6 +15,14 @@ bool fsio_write_text_file(char *file, char *text)
     return(false);
   }
 
+  char *file_clone = strdup(file);
+  char *directory  = dirname(file_clone);
+  if (!fsio_mkdirs(directory, S_IRWXU | S_IRWXG))
+  {
+    return(false);
+  }
+  free(file_clone);
+
   FILE *fp = fopen(file, "w");
   if (fp == NULL)
   {
@@ -21,7 +32,9 @@ bool fsio_write_text_file(char *file, char *text)
   if (fputs(text, fp) == EOF)
   {
     fclose(fp);
-    remove(file); // prevent partially written file to be
+
+    // prevent partially written file to be
+    remove(file);
 
     return(false);
   }
@@ -58,8 +71,36 @@ char *fsio_read_text_file(char *file)
 }
 
 
+bool fsio_dir_exists(char *directory)
+{
+  if (directory == NULL)
+  {
+    return(false);
+  }
+
+  struct stat info;
+
+  if (stat(directory, &info) != 0)
+  {
+    return(false);
+  }
+
+  return(S_ISDIR(info.st_mode));
+}
+
+
 bool fsio_mkdir(char *directory, mode_t mode)
 {
+  if (directory == NULL)
+  {
+    return(false);
+  }
+
+  if (fsio_dir_exists(directory))
+  {
+    return(true);
+  }
+
   int result = mkdir(directory, mode);
 
   if (result == 0 || result == EEXIST)
@@ -68,5 +109,41 @@ bool fsio_mkdir(char *directory, mode_t mode)
   }
 
   return(false);
+}
+
+
+bool fsio_mkdirs(char *directory, mode_t mode)
+{
+  if (directory == NULL)
+  {
+    return(false);
+  }
+
+  if (fsio_mkdir(directory, mode))
+  {
+    return(true);
+  }
+
+  char *directory_mutable = strdup(directory);
+
+  for (char *path = directory_mutable; *path != 0; path++)
+  {
+    if (*path == '/')
+    {
+      *path = '\0';
+
+      if (!fsio_mkdir(directory_mutable, mode))
+      {
+        free(directory_mutable);
+        return(false);
+      }
+
+      *path = '/';
+    }
+  }
+
+  free(directory_mutable);
+
+  return(fsio_mkdir(directory, mode));
 }
 
