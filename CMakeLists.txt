@@ -62,24 +62,7 @@ set_target_properties(example PROPERTIES COMPILE_FLAGS "${X_CMAKE_C_FLAGS}")
 # tests
 enable_testing()
 
-utils_setup_c_test(
-  NAME
-    write_text_file_null_file
-    write_text_file_null_text
-    write_text_file_dir_not_exists
-    write_text_file_empty
-    write_text_file_content
-    write_text_file_long_content
-    write_text_file_overwrite
-    write_text_file_stress
-    append_text_file_content
-    read_text_file_not_found
-    dir_exists_null
-    dir_exists_file
-    dir_exists_dir
-    dir_exists_not_found
-    mkdir_null
-    mkdirs_null
+utils_setup_c_all_tests(
   ADDITIONAL_SOURCES "${COMMON_TEST_SOURCES}"
   COMPILATION_FLAGS "${X_CMAKE_C_FLAGS}"
   BINARY_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
