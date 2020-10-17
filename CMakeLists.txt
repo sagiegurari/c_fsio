@@ -49,14 +49,14 @@ if(DEFINED ENV{X_CMAKE_UNCRUSTIFY_ENABLED})
 endif()
 
 # create static library
-add_library(fsio STATIC ${SOURCES} ${STRING_BUFFER_SOURCES})
+add_library(${CMAKE_PROJECT_NAME} STATIC ${SOURCES} ${STRING_BUFFER_SOURCES})
 if(NOT WIN32)
-  set_target_properties(fsio PROPERTIES COMPILE_FLAGS "${X_CMAKE_C_FLAGS} -Wconversion")
+  set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${X_CMAKE_C_FLAGS} -Wconversion")
 endif()
 
 # example
 add_executable(example examples/example.c)
-target_link_libraries(example fsio)
+target_link_libraries(example ${CMAKE_PROJECT_NAME})
 set_target_properties(example PROPERTIES COMPILE_FLAGS "${X_CMAKE_C_FLAGS}")
 
 # tests
