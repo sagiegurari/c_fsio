@@ -1,14 +1,16 @@
 #include "fsio.h"
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
+
 
 int main()
 {
   // simple examples of writing/appending/reading text files
-  char* file = "./somedir/myfile.txt";
+  char *file = "./somedir/myfile.txt";
   bool done  = fsio_write_text_file(file, "some text\n");
+
   printf("Text file written: %d\n", done);
-  done  = fsio_append_text_file(file, "more text\n");
+  done = fsio_append_text_file(file, "more text\n");
   printf("Text file appended: %d\n", done);
   char *text = fsio_read_text_file(file);
   printf("Read text:\n%s\n", text);
