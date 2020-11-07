@@ -1,7 +1,9 @@
 ## CHANGELOG
 
-### Unpublished
+### v0.1.1 (2020-11-07)
 
+* Internal functions are now namespaced with _fsio prefix.
+* c_string_buffer upgraded to 0.1.4
 * Improved build setup (no need to list test names).
 
 ### v0.1.0 (2020-09-25)

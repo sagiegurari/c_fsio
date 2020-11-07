@@ -8,18 +8,18 @@
 #include <sys/stat.h>
 
 
-bool _write_text_file(char *, char *, char *);
+bool _fsio_write_text_file(char *, char *, char *);
 
 
 bool fsio_write_text_file(char *file, char *text)
 {
-  return(_write_text_file(file, text, "w"));
+  return(_fsio_write_text_file(file, text, "w"));
 }
 
 
 bool fsio_append_text_file(char *file, char *text)
 {
-  return(_write_text_file(file, text, "a"));
+  return(_fsio_write_text_file(file, text, "a"));
 }
 
 
@@ -126,7 +126,7 @@ bool fsio_mkdirs(char *directory, mode_t mode)
 }
 
 
-bool _write_text_file(char *file, char *text, char *mode)
+bool _fsio_write_text_file(char *file, char *text, char *mode)
 {
   if (file == NULL || text == NULL)
   {
