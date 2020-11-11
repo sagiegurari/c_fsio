@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.1.2 (2020-11-12)
+
+* Flush file before closing after write operation.
+
 ### v0.1.1 (2020-11-07)
 
 * Internal functions are now namespaced with _fsio prefix.

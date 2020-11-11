@@ -158,6 +158,7 @@ bool _fsio_write_text_file(char *file, char *text, char *mode)
     return(false);
   }
 
+  fflush(fp);
   fclose(fp);
 
   return(true);
