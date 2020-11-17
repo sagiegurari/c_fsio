@@ -25,6 +25,7 @@ void test_impl()
   assert_true(done);
   assert_string_equal(text, content);
 
+  free(text);
   free(content);
 }
 

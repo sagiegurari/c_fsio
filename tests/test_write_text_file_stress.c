@@ -28,6 +28,7 @@ void test_impl()
 
     assert_true(done);
     assert_string_equal(text, content);
+    free(text);
 
     done = fsio_append_text_file(file, content);
     text = fsio_read_text_file(file);
@@ -38,8 +39,10 @@ void test_impl()
 
     assert_true(done);
     assert_string_equal(text, double_content);
+    free(text);
   }
 
+  free(double_content);
   free(content);
 }
 

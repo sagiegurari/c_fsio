@@ -1,6 +1,7 @@
 #include "fsio.h"
 #include "test.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 
@@ -17,6 +18,7 @@ void test_impl()
 
   assert_true(done);
   assert_string_equal(text, "some\ncontent");
+  free(text);
 }
 
 

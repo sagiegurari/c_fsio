@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.1.3
+
+* Free all memory in tests
+
 ### v0.1.2 (2020-11-12)
 
 * Flush file before closing after write operation.
