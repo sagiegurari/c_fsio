@@ -3,6 +3,7 @@
 ### v0.1.3
 
 * Free all memory in tests
+* Test memory leaks in CI
 
 ### v0.1.2 (2020-11-12)
 
