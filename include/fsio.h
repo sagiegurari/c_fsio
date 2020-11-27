@@ -5,20 +5,6 @@
 #include <sys/types.h>
 
 /**
- * Returns the basename from the provided path.
- * If the path ends with a path separator, this function will return an empty string.
- * The output must be freed once no longer needed.
- */
-char *fsio_basename(char * /* path */);
-
-/**
- * Returns the dirname from the provided path.
- * If the path defines a file with no parent, a '/' value will be returned.
- * The output must be freed once no longer needed.
- */
-char *fsio_dirname(char * /* path */);
-
-/**
  * Writes the provided text into the file, deleting any previous content.
  * In case of any error or invalid input, this function will return false.
  * If parent directories do not exist, they will be created.
@@ -82,7 +68,6 @@ bool fsio_mkdirs(char * /* directory */, mode_t /* mode */);
 
 /**
  * Creates a new directory for the parent path of the provided file path.
- * If the provided path defined a directory (ends with /) it will create it as well.
  * This function will return true if the directory was created or
  * if it already exists.
  */

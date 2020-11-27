@@ -13,65 +13,6 @@ bool _fsio_write_text_file(char *, char *, char *);
 bool _fsio_remove(char *, struct StringBuffer *);
 
 
-char *fsio_basename(char *path)
-{
-  if (path == NULL)
-  {
-    return(NULL);
-  }
-
-  size_t len = strlen(path);
-  if (!len)
-  {
-    return(strdup(""));
-  }
-
-  if (path[len - 1] == '/')
-  {
-    return(strdup(""));
-  }
-
-  char *ptr = strrchr(path, '/');
-  if (ptr == NULL)
-  {
-    return(strdup(path));
-  }
-
-  return(strdup(ptr + 1));
-}
-
-
-char *fsio_dirname(char *path)
-{
-  if (path == NULL)
-  {
-    return(NULL);
-  }
-
-  size_t len = strlen(path);
-  if (!len)
-  {
-    return(strdup("."));
-  }
-
-  if (path[len - 1] == '/')
-  {
-    return(strdup(path));
-  }
-
-  char *ptr = strrchr(path, '/');
-  if (ptr == NULL)
-  {
-    return(strdup("."));
-  }
-
-  char *directory = strdup(path);
-  directory[len - strlen(ptr) + 1] = '\0';
-
-  return(directory);
-}
-
-
 bool fsio_write_text_file(char *file, char *text)
 {
   return(_fsio_write_text_file(file, text, "w"));
@@ -246,15 +187,22 @@ bool fsio_mkdirs(char *directory, mode_t mode)
 
 bool fsio_mkdirs_parent(char *path, mode_t mode)
 {
-  char *directory = fsio_dirname(path);
-
-  if (directory == NULL)
+  if (path == NULL)
   {
     return(false);
   }
 
+  char *path_clone = strdup(path);
+  char *directory  = dirname(path_clone);
+
+  if (directory == NULL)
+  {
+    free(path_clone);
+    return(false);
+  }
+
   bool done = fsio_mkdirs(directory, mode);
-  free(directory);
+  free(path_clone);
 
   return(done);
 }
