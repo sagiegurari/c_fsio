@@ -1,6 +1,6 @@
 ## CHANGELOG
 
-### v0.1.3
+### v0.1.3 (2020-11-27)
 
 * New fsio_remove function.
 * New fsio_copy_file functions.
