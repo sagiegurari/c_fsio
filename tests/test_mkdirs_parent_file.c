@@ -14,6 +14,9 @@ void test_impl()
 
   bool is_file = fsio_file_exists("./mkdirs_parent_file/1/2/3/file.txt");
   assert_true(!is_file);
+
+  bool deleted = fsio_remove("./mkdirs_parent_file");
+  assert_true(deleted);
 }
 
 

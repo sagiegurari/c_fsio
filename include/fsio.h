@@ -88,5 +88,11 @@ bool fsio_mkdirs(char * /* directory */, mode_t /* mode */);
  */
 bool fsio_mkdirs_parent(char * /* path */, mode_t /* mode */);
 
+/**
+ * Removes file or directory for the provided path.
+ * If the path points to an non empty directory, it will delete its content as well.
+ */
+bool fsio_remove(char * /* path */);
+
 #endif
 

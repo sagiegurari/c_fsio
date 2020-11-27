@@ -11,6 +11,9 @@ void test_impl()
 
   bool is_directory = fsio_dir_exists("./mkdirs_parent_dir/1/2/3/");
   assert_true(is_directory);
+
+  bool deleted = fsio_remove("./mkdirs_parent_dir");
+  assert_true(deleted);
 }
 
 

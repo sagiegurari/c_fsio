@@ -1,5 +1,6 @@
 #include "fsio.h"
 #include "string_buffer.h"
+#include <dirent.h>
 #include <errno.h>
 #include <libgen.h>
 #include <stdio.h>
@@ -9,6 +10,7 @@
 
 bool _fsio_load_stat(char *, struct stat *);
 bool _fsio_write_text_file(char *, char *, char *);
+bool _fsio_remove(char *, struct StringBuffer *);
 
 
 char *fsio_basename(char *path)
@@ -258,6 +260,21 @@ bool fsio_mkdirs_parent(char *path, mode_t mode)
 }
 
 
+bool fsio_remove(char *path)
+{
+  if (path == NULL)
+  {
+    return(true);
+  }
+
+  struct StringBuffer *buffer = string_buffer_new();
+  bool                done    = _fsio_remove(path, buffer);
+  string_buffer_release(buffer);
+
+  return(done);
+}
+
+
 bool _fsio_load_stat(char *path, struct stat *info)
 {
   if (path == NULL)
@@ -311,4 +328,62 @@ bool _fsio_write_text_file(char *file, char *text, char *mode)
 
   return(true);
 }
+
+
+bool _fsio_remove(char *path, struct StringBuffer *buffer)
+{
+  if (fsio_file_exists(path))
+  {
+    return(remove(path) == 0);
+  }
+
+  bool done = true;
+  if (fsio_dir_exists(path))
+  {
+    DIR *directory = opendir(path);
+    if (directory == NULL)
+    {
+      return(false);
+    }
+
+    struct dirent *entry;
+    while ((entry = readdir(directory)))
+    {
+      if (!strcmp(entry->d_name, ".") || !strcmp(entry->d_name, ".."))
+      {
+        // skip special directories
+        continue;
+      }
+
+      string_buffer_append_string(buffer, path);
+      string_buffer_append(buffer, '/');
+      string_buffer_append_string(buffer, entry->d_name);
+
+      char *entry_path = string_buffer_to_string(buffer);
+      string_buffer_clear(buffer);
+
+      if (fsio_dir_exists(entry_path))
+      {
+        done = _fsio_remove(entry_path, buffer);
+      }
+      else
+      {
+        done = remove(entry_path) == 0;
+      }
+      free(entry_path);
+
+      if (!done)
+      {
+        closedir(directory);
+        return(false);
+      }
+    }
+
+    closedir(directory);
+
+    done = remove(path) == 0;
+  }
+
+  return(done);
+} /* _fsio_remove */
 

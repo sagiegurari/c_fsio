@@ -2,8 +2,9 @@
 
 ### v0.1.3
 
-* New dirname function.
-* New basename function.
+* New fsio_remove function.
+* New fsio_dirname function.
+* New fsio_basename function.
 * New fsio_copy_file functions.
 * New fsio_path_exists function.
 * New fsio_file_exists function.
