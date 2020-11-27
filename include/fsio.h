@@ -25,6 +25,12 @@ bool fsio_append_text_file(char * /* file */, char * /* text */);
 char *fsio_read_text_file(char * /* file */);
 
 /**
+ * Creates an empty file for the provided path.
+ * If a file exists in that path, it will be truncated.
+ */
+bool fsio_create_empty_file(char * /* file */);
+
+/**
  * Copies the source file content to the target file, deleting any previous
  * content in the target file.
  * In case of an error, this function will return false.

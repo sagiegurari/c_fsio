@@ -49,6 +49,12 @@ char *fsio_read_text_file(char *file)
 }
 
 
+bool fsio_create_empty_file(char *file)
+{
+  return(fsio_write_text_file(file, ""));
+}
+
+
 bool fsio_copy_file(char *source, char *target)
 {
   FILE *source_fp = fopen(source, "r");

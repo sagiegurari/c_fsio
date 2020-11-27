@@ -7,7 +7,7 @@ void test_impl()
 {
   char *file = "./dir_exists_file";
 
-  fsio_write_text_file(file, "");
+  fsio_create_empty_file(file);
   bool exists = fsio_dir_exists(file);
   remove(file);
 
