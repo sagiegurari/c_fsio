@@ -8,7 +8,7 @@ void test_impl()
 {
   char *path = fsio_basename("file.txt");
 
-  assert_true(!strcmp(path, "file.txt"));
+  assert_string_equal(path, "file.txt");
 
   free(path);
 }

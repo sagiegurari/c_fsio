@@ -6,9 +6,9 @@
 
 void test_impl()
 {
-  char *path = fsio_dirname("/");
+  char *path = fsio_dirname("./dir_1/dir_2/");
 
-  assert_true(!strcmp(path, "/"));
+  assert_string_equal(path, "./dir_1/dir_2/");
 
   free(path);
 }

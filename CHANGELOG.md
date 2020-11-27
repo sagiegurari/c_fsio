@@ -8,6 +8,7 @@
 * New fsio_path_exists function.
 * New fsio_file_exists function.
 * New fsio_create_empty_file function.
+* New fsio_mkdirs_parent function.
 * Free all memory in tests
 * Test memory leaks in CI
 

@@ -64,7 +64,7 @@ char *fsio_dirname(char *path)
   }
 
   char *directory = strdup(path);
-  directory[strlen(ptr)] = '\0';
+  directory[len - strlen(ptr) + 1] = '\0';
 
   return(directory);
 }
@@ -239,6 +239,22 @@ bool fsio_mkdirs(char *directory, mode_t mode)
   free(directory_mutable);
 
   return(fsio_mkdir(directory, mode));
+}
+
+
+bool fsio_mkdirs_parent(char *path, mode_t mode)
+{
+  char *directory = fsio_dirname(path);
+
+  if (directory == NULL)
+  {
+    return(false);
+  }
+
+  bool done = fsio_mkdirs(directory, mode);
+  free(directory);
+
+  return(done);
 }
 
 

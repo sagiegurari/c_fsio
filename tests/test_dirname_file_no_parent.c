@@ -6,9 +6,9 @@
 
 void test_impl()
 {
-  char *path = fsio_basename("/dir1/dir2/file.txt");
+  char *path = fsio_dirname("file.txt");
 
-  assert_true(!strcmp(path, "file.txt"));
+  assert_string_equal(path, ".");
 
   free(path);
 }

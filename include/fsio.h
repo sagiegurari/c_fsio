@@ -71,15 +71,22 @@ bool fsio_dir_exists(char * /* path */);
  * This function will return true if the directory was created or
  * if it already exists.
  */
-bool fsio_mkdir(char * /* directory */, mode_t /*mode*/);
+bool fsio_mkdir(char * /* directory */, mode_t /* mode */);
 
 /**
  * Creates a new directory, including any needed parent directory.
  * This function will return true if the directory was created or
  * if it already exists.
  */
-bool fsio_mkdirs(char * /* directory */, mode_t /*mode*/);
+bool fsio_mkdirs(char * /* directory */, mode_t /* mode */);
 
+/**
+ * Creates a new directory for the parent path of the provided file path.
+ * If the provided path defined a directory (ends with /) it will create it as well.
+ * This function will return true if the directory was created or
+ * if it already exists.
+ */
+bool fsio_mkdirs_parent(char * /* path */, mode_t /* mode */);
 
 #endif
 
