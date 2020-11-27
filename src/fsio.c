@@ -7,7 +7,7 @@
 #include <string.h>
 #include <sys/stat.h>
 
-
+bool _fsio_load_stat(char *, struct stat *);
 bool _fsio_write_text_file(char *, char *, char *);
 
 
@@ -49,16 +49,32 @@ char *fsio_read_text_file(char *file)
 }
 
 
-bool fsio_dir_exists(char *directory)
+bool fsio_path_exists(char *path)
 {
-  if (directory == NULL)
+  struct stat info;
+
+  return(_fsio_load_stat(path, &info));
+}
+
+
+bool fsio_file_exists(char *path)
+{
+  struct stat info;
+
+  if (!_fsio_load_stat(path, &info))
   {
     return(false);
   }
 
+  return(S_ISREG(info.st_mode));
+}
+
+
+bool fsio_dir_exists(char *path)
+{
   struct stat info;
 
-  if (stat(directory, &info) != 0)
+  if (!_fsio_load_stat(path, &info))
   {
     return(false);
   }
@@ -123,6 +139,22 @@ bool fsio_mkdirs(char *directory, mode_t mode)
   free(directory_mutable);
 
   return(fsio_mkdir(directory, mode));
+}
+
+
+bool _fsio_load_stat(char *path, struct stat *info)
+{
+  if (path == NULL)
+  {
+    return(false);
+  }
+
+  if (stat(path, info) != 0)
+  {
+    return(false);
+  }
+
+  return(true);
 }
 
 

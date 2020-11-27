@@ -2,6 +2,8 @@
 
 ### v0.1.3
 
+* New fsio_path_exists function.
+* New fsio_file_exists function.
 * Free all memory in tests
 * Test memory leaks in CI
 

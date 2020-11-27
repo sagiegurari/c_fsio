@@ -25,9 +25,19 @@ bool fsio_append_text_file(char * /* file */, char * /* text */);
 char *fsio_read_text_file(char * /*file*/);
 
 /**
+ * Returns true if the provided path exists.
+ */
+bool fsio_path_exists(char * /* path */);
+
+/**
+ * Returns true if the provided path exists and is a regular file.
+ */
+bool fsio_file_exists(char * /* path */);
+
+/**
  * Returns true if the provided path exists and is a directory.
  */
-bool fsio_dir_exists(char * /* directory */);
+bool fsio_dir_exists(char * /* path */);
 
 /**
  * Creates a new directory.

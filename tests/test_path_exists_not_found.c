@@ -4,7 +4,7 @@
 
 void test_impl()
 {
-  bool exists = fsio_dir_exists("./dir_exists_not_found");
+  bool exists = fsio_dir_exists("./path_exists_not_found");
 
   assert_true(!exists);
 }
