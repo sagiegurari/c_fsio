@@ -18,4 +18,8 @@ int main()
   // creating a full directory path
   done = fsio_mkdirs("./somedir/dir1/dir2/dir3", 0777);
   printf("Created directories: %d\n", done);
+
+  // recursive delete or files and directories
+  done = fsio_remove("./somedir");
+  printf("Deleted somedir and all content.");
 }
