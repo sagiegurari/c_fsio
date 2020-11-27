@@ -49,6 +49,41 @@ char *fsio_read_text_file(char *file)
 }
 
 
+bool fsio_copy_file(char *source, char *target)
+{
+  FILE *source_fp = fopen(source, "r");
+
+  if (source_fp == NULL)
+  {
+    return(false);
+  }
+
+  FILE *target_fp = fopen(target, "w");
+  if (target_fp == NULL)
+  {
+    fclose(source_fp);
+    return(false);
+  }
+
+  int character;
+  while ((character = getc(source_fp)) != EOF)
+  {
+    if (fputc(character, target_fp) == EOF)
+    {
+      fclose(source_fp);
+      fclose(target_fp);
+      remove(target);
+      break;
+    }
+  }
+
+  fclose(source_fp);
+  fclose(target_fp);
+
+  return(true);
+}
+
+
 bool fsio_path_exists(char *path)
 {
   struct stat info;

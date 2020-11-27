@@ -22,7 +22,14 @@ bool fsio_append_text_file(char * /* file */, char * /* text */);
  * Reads and returns the text from the provided file.
  * In case of any error or invalid input, this function will return NULL.
  */
-char *fsio_read_text_file(char * /*file*/);
+char *fsio_read_text_file(char * /* file */);
+
+/**
+ * Copies the source file content to the target file, deleting any previous
+ * content in the target file.
+ * In case of an error, this function will return false.
+ */
+bool fsio_copy_file(char * /* source */, char * /* target */);
 
 /**
  * Returns true if the provided path exists.
