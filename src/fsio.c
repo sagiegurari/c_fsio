@@ -11,6 +11,65 @@ bool _fsio_load_stat(char *, struct stat *);
 bool _fsio_write_text_file(char *, char *, char *);
 
 
+char *fsio_basename(char *path)
+{
+  if (path == NULL)
+  {
+    return(NULL);
+  }
+
+  size_t len = strlen(path);
+  if (!len)
+  {
+    return(strdup(""));
+  }
+
+  if (path[len - 1] == '/')
+  {
+    return(strdup(""));
+  }
+
+  char *ptr = strrchr(path, '/');
+  if (ptr == NULL)
+  {
+    return(strdup(path));
+  }
+
+  return(strdup(ptr + 1));
+}
+
+
+char *fsio_dirname(char *path)
+{
+  if (path == NULL)
+  {
+    return(NULL);
+  }
+
+  size_t len = strlen(path);
+  if (!len)
+  {
+    return(strdup("."));
+  }
+
+  if (path[len - 1] == '/')
+  {
+    return(strdup(path));
+  }
+
+  char *ptr = strrchr(path, '/');
+  if (ptr == NULL)
+  {
+    return(strdup("."));
+  }
+
+  char *directory = strdup(path);
+  directory[strlen(ptr)] = '\0';
+
+  return(directory);
+}
+
+
 bool fsio_write_text_file(char *file, char *text)
 {
   return(_fsio_write_text_file(file, text, "w"));
