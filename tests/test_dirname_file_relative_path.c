@@ -10,10 +10,6 @@ void test_impl()
 
   assert_string_equal(path, "./dir_1/dir_2/");
 
-  char *d = fsio_dirname("./mkdirs_parent_file/1/2/3/file.txt");
-  assert_string_equal(d, "./mkdirs_parent_file/1/2/3/");
-
-
   free(path);
 }
 
