@@ -32,7 +32,7 @@ void assert_string_equal(char *value1, char *value2)
 {
   if (strcmp(value1, value2) != 0)
   {
-    printf("Assert Failed, value: %s not equals to value: %s", value1, value2);
+    printf("Assert Failed, value: %s not equals to value: %s\n", value1, value2);
     test_fail();
   }
 }
