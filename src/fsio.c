@@ -140,7 +140,7 @@ bool fsio_mkdir(char *directory, mode_t mode)
 
   int result = mkdir(directory, mode);
 
-  if (result == 0 || result == EEXIST)
+  if (result == 0 || errno == EEXIST)
   {
     return(true);
   }
@@ -169,10 +169,13 @@ bool fsio_mkdirs(char *directory, mode_t mode)
     {
       *path = '\0';
 
-      if (!fsio_mkdir(directory_mutable, mode))
+      if (strlen(directory_mutable))
       {
-        free(directory_mutable);
-        return(false);
+        if (!fsio_mkdir(directory_mutable, mode))
+        {
+          free(directory_mutable);
+          return(false);
+        }
       }
 
       *path = '/';
