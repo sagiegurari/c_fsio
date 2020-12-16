@@ -4,7 +4,7 @@
 
 void test_impl()
 {
-  char *dir = "./mkdirs_dir/1/2/3/4/5/";
+  char *dir = "./_test_chmod_recursive_dir/1/2/3/4/5/";
 
   bool exists = fsio_mkdirs(dir, S_IRWXU);
 
@@ -12,18 +12,18 @@ void test_impl()
   exists = fsio_dir_exists(dir);
   assert_true(exists);
 
-  bool done = fsio_chmod_recursive("./mkdirs_dir", FSIO_MODE_ALL);
+  bool done = fsio_chmod_recursive("./_test_chmod_recursive_dir", FSIO_MODE_ALL);
   assert_true(done);
 
   struct stat info;
-  stat("./mkdirs_dir", &info);
+  stat("./_test_chmod_recursive_dir", &info);
   mode_t      mode = info.st_mode & 0777;
   assert_mode_equal(mode, FSIO_MODE_ALL);
   stat(dir, &info);
   mode = info.st_mode & 0777;
   assert_mode_equal(mode, FSIO_MODE_ALL);
 
-  fsio_remove("./mkdirs_dir");
+  fsio_remove("./_test_chmod_recursive_dir");
 }
 
 
