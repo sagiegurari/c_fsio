@@ -6,11 +6,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
+
+
+const mode_t FSIO_MODE_ALL = S_IRWXU | S_IRWXG | S_IRWXO;
+
 
 bool _fsio_load_stat(char *, struct stat *);
 bool _fsio_write_text_file(char *, char *, char *);
-bool _fsio_remove(char *, struct StringBuffer *);
+bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo);
+bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo);
+bool _fsio_recursive_operation(char *, bool (*callback)(struct FsIORecursiveCallbackInfo), void *, struct StringBuffer *);
 
 
 bool fsio_write_text_file(char *file, char *text)
@@ -218,8 +223,29 @@ bool fsio_remove(char *path)
     return(true);
   }
 
+  return(fsio_recursive_operation(path, _fsio_remove_callback, NULL));
+}
+
+
+bool fsio_chmod_recursive(char *path, mode_t mode)
+{
+  mode_t mode_ptr[1];
+
+  mode_ptr[0] = mode;
+
+  return(fsio_recursive_operation(path, _fsio_chmod_recursive_callback, mode_ptr));
+}
+
+
+bool fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveCallbackInfo), void *context)
+{
+  if (path == NULL)
+  {
+    return(false);
+  }
+
   struct StringBuffer *buffer = string_buffer_new();
-  bool                done    = _fsio_remove(path, buffer);
+  bool                done    = _fsio_recursive_operation(path, callback, context, buffer);
   string_buffer_release(buffer);
 
   return(done);
@@ -249,7 +275,7 @@ bool _fsio_write_text_file(char *file, char *text, char *mode)
     return(false);
   }
 
-  bool directory_created = fsio_mkdirs_parent(file, S_IRWXU | S_IRWXG);
+  bool directory_created = fsio_mkdirs_parent(file, FSIO_MODE_ALL);
   if (!directory_created)
   {
     return(false);
@@ -278,14 +304,33 @@ bool _fsio_write_text_file(char *file, char *text, char *mode)
 }
 
 
-bool _fsio_remove(char *path, struct StringBuffer *buffer)
+bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo info)
 {
+  return(remove(info.path) == 0);
+}
+
+
+bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo info)
+{
+  mode_t *mode = (mode_t *)info.context;
+
+  return(chmod(info.path, mode[0]) == 0);
+}
+
+
+bool _fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveCallbackInfo), void *context, struct StringBuffer *buffer)
+{
+  struct FsIORecursiveCallbackInfo info;
+
+  info.context = context;
+  info.path    = path;
+  info.is_file = true;
+
   if (fsio_file_exists(path))
   {
-    return(remove(path) == 0);
+    return(callback(info));
   }
 
-  bool done = true;
   if (fsio_dir_exists(path))
   {
     DIR *directory = opendir(path);
@@ -310,13 +355,16 @@ bool _fsio_remove(char *path, struct StringBuffer *buffer)
       char *entry_path = string_buffer_to_string(buffer);
       string_buffer_clear(buffer);
 
+      bool done = false;
       if (fsio_dir_exists(entry_path))
       {
-        done = _fsio_remove(entry_path, buffer);
+        done = _fsio_recursive_operation(entry_path, callback, context, buffer);
       }
       else
       {
-        done = remove(entry_path) == 0;
+        info.path    = entry_path;
+        info.is_file = true;
+        done         = callback(info);
       }
       free(entry_path);
 
@@ -329,9 +377,11 @@ bool _fsio_remove(char *path, struct StringBuffer *buffer)
 
     closedir(directory);
 
-    done = remove(path) == 0;
+    info.path    = path;
+    info.is_file = false;
+    return(callback(info));
   }
 
-  return(done);
-} /* _fsio_remove */
+  return(false);
+} /* _fsio_recursive_operation */
 

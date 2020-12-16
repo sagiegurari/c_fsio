@@ -2,7 +2,20 @@
 #define __FSIO_H__
 
 #include <stdbool.h>
+#include <sys/stat.h>
 #include <sys/types.h>
+
+struct FsIORecursiveCallbackInfo
+{
+  void *context;
+  char *path;
+  bool is_file;
+};
+
+/**
+ * A 777 permission mode defined as S_IRWXU | S_IRWXG | S_IRWXO
+ */
+extern const mode_t FSIO_MODE_ALL;
 
 /**
  * Writes the provided text into the file, deleting any previous content.
@@ -78,6 +91,19 @@ bool fsio_mkdirs_parent(char * /* path */, mode_t /* mode */);
  * If the path points to an non empty directory, it will delete its content as well.
  */
 bool fsio_remove(char * /* path */);
+
+/**
+ * Runs change mode for all files and directories from the provided path.
+ */
+bool fsio_chmod_recursive(char * /* path */, mode_t /* mode */);
+
+/**
+ * Runs recursively on the provided path and for each file/directory it will call the provided
+ * callback with the info struct.
+ * The callback will return true (to continue) or false (to stop and exit the flow).
+ * The info struct should not be modified by the callback.
+ */
+bool fsio_recursive_operation(char * /* path */, bool (*callback)(struct FsIORecursiveCallbackInfo), void * /* context */);
 
 #endif
 

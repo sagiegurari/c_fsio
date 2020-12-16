@@ -39,12 +39,16 @@ int main()
   printf("Read text:\n%s\n", text);
 
   // creating a full directory path
-  done = fsio_mkdirs("./somedir/dir1/dir2/dir3", 0777);
+  done = fsio_mkdirs("./somedir/dir1/dir2/dir3", FSIO_MODE_ALL);
   printf("Created directories: %d\n", done);
+
+  // chmod to all permissions recursively
+  done = fsio_chmod_recursive("./somedir/", FSIO_MODE_ALL);
+  printf("Chmod done: %d\n", done);
 
   // recursive delete or files and directories
   done = fsio_remove("./somedir");
-  printf("Deleted somedir and all content.");
+  printf("Deleted somedir and all content.\n");
 }
 ```
 

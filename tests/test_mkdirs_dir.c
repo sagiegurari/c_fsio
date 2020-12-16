@@ -17,6 +17,8 @@ void test_impl()
   assert_true(done);
   exists = fsio_dir_exists(dir);
   assert_true(!exists);
+
+  fsio_remove("./mkdirs_dir");
 }
 
 

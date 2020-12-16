@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### v0.1.5 (2020-12-16)
+
+* New fsio_chmod_recursive function.
+* New fsio_recursive_operation function which enables to recursively invoke an operation on all files/directories.
+* New FSIO_MODE_ALL global constant which defines an all permissions (777) mode_t value.
+
 ### v0.1.4 (2020-12-09)
 
 * Fixed root path mkdirs invocation.

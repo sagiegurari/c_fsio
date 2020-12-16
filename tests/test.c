@@ -36,3 +36,14 @@ void assert_string_equal(char *value1, char *value2)
     test_fail();
   }
 }
+
+
+void assert_mode_equal(mode_t value1, mode_t value2)
+{
+  if (value1 != value2)
+  {
+    printf("Assert Failed, value: %3o not equals to value: %3o", value1 & 0777, value2 & 0777);
+    test_fail();
+  }
+}
+
