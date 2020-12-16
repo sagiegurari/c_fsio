@@ -4,14 +4,21 @@
 
 void test_impl()
 {
-  bool done = fsio_chmod_recursive("./test_chmod_recursive_exists", FSIO_MODE_ALL);
+  char *file = "./_test_chmod_empty_file.txt";
+  bool done  = fsio_create_empty_file(file);
+
+  assert_true(done);
+
+  done = fsio_chmod_recursive("./_test_chmod_empty_file.txt", FSIO_MODE_ALL);
 
   assert_true(done);
 
   struct stat info;
-  stat("./test_chmod_recursive_exists", &info);
+  stat("./_test_chmod_empty_file.txt", &info);
   mode_t      mode = info.st_mode & 0777;
   assert_mode_equal(mode, FSIO_MODE_ALL);
+
+  fsio_remove("./_test_chmod_empty_file.txt");
 }
 
 
