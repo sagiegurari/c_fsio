@@ -12,6 +12,23 @@ struct FsIORecursiveCallbackInfo
   bool is_file;
 };
 
+struct FsIOCopyFileOptions
+{
+  // amount of additional retries in case of write error
+  unsigned int write_retries;
+  unsigned int retry_interval_seconds;
+};
+
+
+struct FsIOMoveFileOptions
+{
+  // True to force move via file copy instead of rename
+  bool         force_copy;
+  // amount of additional retries in case of write error
+  unsigned int write_retries;
+  unsigned int retry_interval_seconds;
+};
+
 /**
  * A 777 permission mode defined as S_IRWXU | S_IRWXG | S_IRWXO
  */
@@ -49,6 +66,31 @@ bool fsio_create_empty_file(char * /* file */);
  * In case of an error, this function will return false.
  */
 bool fsio_copy_file(char * /* source */, char * /* target */);
+
+/**
+ * Copies the source file content to the target file, deleting any previous
+ * content in the target file.
+ * In case of an error, this function will return false.
+ */
+bool fsio_copy_file_with_options(char * /* source */, char * /* target */, struct FsIOCopyFileOptions);
+
+/**
+ * Moves the source file content to the target file, deleting any previous
+ * content in the target file.
+ * In case of an error, this function will return false.
+ * In case of file move via copy (in case of different file systems) the
+ * new file will have current user owner and group and default permissions.
+ */
+bool fsio_move_file(char * /* source */, char * /* target */);
+
+/**
+ * Moves the source file content to the target file, deleting any previous
+ * content in the target file.
+ * In case of an error, this function will return false.
+ * In case of file move via copy (in case of different file systems) the
+ * new file will have current user owner and group and default permissions.
+ */
+bool fsio_move_file_with_options(char * /* source */, char * /* target */, struct FsIOMoveFileOptions);
 
 /**
  * Returns true if the provided path exists.

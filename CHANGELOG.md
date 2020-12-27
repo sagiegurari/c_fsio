@@ -1,5 +1,11 @@
 ## CHANGELOG
 
+### v0.1.6 (2020-12-27)
+
+* New fsio_move_file function.
+* New fsio_move_file_with_options function.
+* New fsio_copy_file_with_options function.
+
 ### v0.1.5 (2020-12-16)
 
 * New fsio_chmod_recursive function.

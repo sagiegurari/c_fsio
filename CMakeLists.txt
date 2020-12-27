@@ -31,7 +31,7 @@ macro(add_external_lib)
     LIBRARY_PARENT_DIRECTORY target
   )
 endmacro(add_external_lib)
-add_external_lib("string_buffer" "v0.1.4")
+add_external_lib("string_buffer")
 
 include_directories(include "${STRING_BUFFER_INCLUDE}")
 

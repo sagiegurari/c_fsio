@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 
 const mode_t FSIO_MODE_ALL = S_IRWXU | S_IRWXG | S_IRWXO;
@@ -64,6 +65,17 @@ bool fsio_create_empty_file(char *file)
 
 bool fsio_copy_file(char *source, char *target)
 {
+  struct FsIOCopyFileOptions options;
+
+  options.write_retries          = 0;
+  options.retry_interval_seconds = 0;
+
+  return(fsio_copy_file_with_options(source, target, options));
+}
+
+
+bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFileOptions options)
+{
   FILE *source_fp = fopen(source, "r");
 
   if (source_fp == NULL)
@@ -78,22 +90,85 @@ bool fsio_copy_file(char *source, char *target)
     return(false);
   }
 
-  int character;
+  int          character;
+  bool         delete_file   = false;
+  unsigned int write_retries = options.write_retries + 1;
   while ((character = getc(source_fp)) != EOF)
   {
-    if (fputc(character, target_fp) == EOF)
+    bool written = false;
+    for (unsigned int index = 0; index < write_retries; index++)
     {
-      fclose(source_fp);
-      fclose(target_fp);
-      remove(target);
+      if (fputc(character, target_fp) != EOF)
+      {
+        written = true;
+        break;
+      }
+      else if (options.retry_interval_seconds)
+      {
+        sleep(options.retry_interval_seconds);
+      }
+    }
+
+    if (!written)
+    {
+      delete_file = true;
       break;
     }
   }
 
   fclose(source_fp);
   fclose(target_fp);
+  if (delete_file)
+  {
+    remove(target);
+  }
 
   return(true);
+} /* fsio_copy_file_with_options */
+
+
+bool fsio_move_file(char *source, char *target)
+{
+  struct FsIOMoveFileOptions options;
+
+  options.force_copy             = false;
+  options.write_retries          = 0;
+  options.retry_interval_seconds = 0;
+
+  return(fsio_move_file_with_options(source, target, options));
+}
+
+
+bool fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFileOptions options)
+{
+  if (!fsio_file_exists(source))
+  {
+    return(false);
+  }
+
+  if (!options.force_copy)
+  {
+    if (!rename(source, target))
+    {
+      return(true);
+    }
+
+    if (errno != EXDEV)
+    {
+      return(false);
+    }
+  }
+
+  struct FsIOCopyFileOptions copy_options;
+  copy_options.write_retries          = options.write_retries;
+  copy_options.retry_interval_seconds = options.retry_interval_seconds;
+  bool copy_done = fsio_copy_file_with_options(source, target, copy_options);
+  if (copy_done)
+  {
+    fsio_remove(source);
+  }
+
+  return(copy_done);
 }
 
 
