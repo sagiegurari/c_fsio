@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.1.7
+
+* Added cargo-make makefile for simpler sharing of optional development build instructions.
+
 ### v0.1.6 (2020-12-27)
 
 * New fsio_move_file function.
