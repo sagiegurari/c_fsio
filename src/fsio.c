@@ -19,6 +19,33 @@ bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo);
 bool _fsio_recursive_operation(char *, bool (*callback)(struct FsIORecursiveCallbackInfo), void *, struct StringBuffer *);
 
 
+long fsio_file_size(char *file)
+{
+  if (!fsio_file_exists(file))
+  {
+    return(-1);
+  }
+
+  FILE *fp = fopen(file, "r");
+  if (fp == NULL)
+  {
+    return(-1);
+  }
+
+  long current_position = ftell(fp);
+
+  fseek(fp, 0L, SEEK_END);
+  long size = ftell(fp);
+
+  // set back to original position
+  fseek(fp, current_position, SEEK_SET);
+
+  fclose(fp);
+
+  return(size);
+}
+
+
 bool fsio_write_text_file(char *file, char *text)
 {
   return(_fsio_write_text_file(file, text, "w"));
@@ -33,18 +60,51 @@ bool fsio_append_text_file(char *file, char *text)
 
 char *fsio_read_text_file(char *file)
 {
-  FILE *fp = fopen(file, "r");
+  struct FsIOReadTextFileOptions options;
 
+  options.max_read_limit = 0;
+  options.tail           = false;
+
+  return(fsio_read_text_file_with_options(file, options));
+}
+
+
+char *fsio_read_text_file_with_options(char *file, struct FsIOReadTextFileOptions options)
+{
+  long file_size = fsio_file_size(file);
+
+  if (file_size < 0)
+  {
+    return(NULL);
+  }
+  if (!file_size)
+  {
+    return(strdup(""));
+  }
+
+  FILE *fp = fopen(file, "r");
   if (fp == NULL)
   {
     return(NULL);
   }
 
+  long left_to_read = file_size;
+  if (options.max_read_limit > 0 && left_to_read > options.max_read_limit)
+  {
+    left_to_read = options.max_read_limit;
+
+    if (options.tail)
+    {
+      fseek(fp, (-1) * left_to_read, SEEK_END);
+    }
+  }
+
   int                 character;
   struct StringBuffer *buffer = string_buffer_new();
-  while ((character = getc(fp)) != EOF)
+  while ((character = getc(fp)) != EOF && left_to_read > 0)
   {
     string_buffer_append(buffer, (char)character);
+    left_to_read--;
   }
 
   fclose(fp);
@@ -54,7 +114,7 @@ char *fsio_read_text_file(char *file)
   string_buffer_release(buffer);
 
   return(text);
-}
+} /* fsio_read_text_file_with_options */
 
 
 bool fsio_create_empty_file(char *file)
@@ -76,6 +136,11 @@ bool fsio_copy_file(char *source, char *target)
 
 bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFileOptions options)
 {
+  if (source == NULL || target == NULL)
+  {
+    return(false);
+  }
+
   FILE *source_fp = fopen(source, "r");
 
   if (source_fp == NULL)
@@ -124,7 +189,7 @@ bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFile
   }
 
   return(true);
-} /* fsio_copy_file_with_options */
+}   /* fsio_copy_file_with_options */
 
 
 bool fsio_move_file(char *source, char *target)
@@ -141,7 +206,7 @@ bool fsio_move_file(char *source, char *target)
 
 bool fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFileOptions options)
 {
-  if (!fsio_file_exists(source))
+  if (target == NULL || !fsio_file_exists(source))
   {
     return(false);
   }
@@ -170,6 +235,75 @@ bool fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFile
 
   return(copy_done);
 }
+
+
+char *fsio_join_paths(char *path1, char *path2)
+{
+  if (path1 == NULL)
+  {
+    if (path2 == NULL)
+    {
+      return(NULL);
+    }
+
+    return(strdup(path2));
+  }
+  if (path2 == NULL)
+  {
+    return(strdup(path1));
+  }
+
+  size_t len1 = strlen(path1);
+  if (!len1)
+  {
+    return(strdup(path2));
+  }
+  size_t len2 = strlen(path2);
+  if (!len2)
+  {
+    return(strdup(path1));
+  }
+
+  bool   path1_ends_with_separator   = path1[len1 - 1] == '/' || path1[len1 - 1] == '\\';
+  bool   path2_starts_with_separator = path2[0] == '/' || path2[0] == '\\';
+  bool   need_to_add_separator       = !path1_ends_with_separator && !path2_starts_with_separator;
+  bool   need_to_remove_separator    = path1_ends_with_separator && path2_starts_with_separator;
+
+  size_t concat_len = len1 + len2;
+  if (need_to_add_separator)
+  {
+    concat_len = concat_len + 1;
+  }
+  else if (need_to_remove_separator)
+  {
+    concat_len = concat_len - 1;
+  }
+
+  char *concat_path = malloc(sizeof(char *) * (concat_len + 1));
+
+  for (size_t index = 0; index < len1; index++)
+  {
+    concat_path[index] = path1[index];
+  }
+  size_t offset = len1;
+  if (need_to_add_separator)
+  {
+    concat_path[len1] = '/';
+    offset            = offset + 1;
+  }
+  else if (need_to_remove_separator)
+  {
+    offset = offset - 1;
+  }
+  for (size_t index = 0; index < len2; index++)
+  {
+    concat_path[offset + index] = path2[index];
+  }
+
+  concat_path[concat_len] = 0;
+
+  return(concat_path);
+} /* fsio_join_paths */
 
 
 bool fsio_path_exists(char *path)
@@ -458,5 +592,5 @@ bool _fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursive
   }
 
   return(false);
-} /* _fsio_recursive_operation */
+}   /* _fsio_recursive_operation */
 

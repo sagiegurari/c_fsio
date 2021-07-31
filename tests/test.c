@@ -38,6 +38,16 @@ void assert_string_equal(char *value1, char *value2)
 }
 
 
+void assert_num_equal(long value1, long value2)
+{
+  if (value1 != value2)
+  {
+    printf("Assert Failed, value: %ld not equals to value: %ld", value1, value2);
+    test_fail();
+  }
+}
+
+
 void assert_mode_equal(mode_t value1, mode_t value2)
 {
   if (value1 != value2)

@@ -12,13 +12,20 @@ struct FsIORecursiveCallbackInfo
   bool is_file;
 };
 
+struct FsIOReadTextFileOptions
+{
+  // the limit to read. 0 or negative value for no limit.
+  long max_read_limit;
+  // if limit is set, if true, read from end, else read from start.
+  bool tail;
+};
+
 struct FsIOCopyFileOptions
 {
   // amount of additional retries in case of write error
   unsigned int write_retries;
   unsigned int retry_interval_seconds;
 };
-
 
 struct FsIOMoveFileOptions
 {
@@ -33,6 +40,13 @@ struct FsIOMoveFileOptions
  * A 777 permission mode defined as S_IRWXU | S_IRWXG | S_IRWXO
  */
 extern const mode_t FSIO_MODE_ALL;
+
+/**
+ * Returns the file size.
+ * If no input provided, file is not found or path does not point to a file,
+ * -1 will be returned.
+ */
+long fsio_file_size(char * /* file */);
 
 /**
  * Writes the provided text into the file, deleting any previous content.
@@ -53,6 +67,12 @@ bool fsio_append_text_file(char * /* file */, char * /* text */);
  * In case of any error or invalid input, this function will return NULL.
  */
 char *fsio_read_text_file(char * /* file */);
+
+/**
+ * Reads and returns the text from the provided file.
+ * In case of any error or invalid input, this function will return NULL.
+ */
+char *fsio_read_text_file_with_options(char * /* file */, struct FsIOReadTextFileOptions);
 
 /**
  * Creates an empty file for the provided path.
@@ -91,6 +111,13 @@ bool fsio_move_file(char * /* source */, char * /* target */);
  * new file will have current user owner and group and default permissions.
  */
 bool fsio_move_file_with_options(char * /* source */, char * /* target */, struct FsIOMoveFileOptions);
+
+/**
+ * Will join the provided paths and return a new allocated string with
+ * the result.
+ * If needed, a unix style separator will be added.
+ */
+char *fsio_join_paths(char *, char *);
 
 /**
  * Returns true if the provided path exists.

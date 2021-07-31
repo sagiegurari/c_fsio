@@ -1,7 +1,11 @@
 ## CHANGELOG
 
-### v0.1.7
+### v0.1.7 (2021-07-31)
 
+* New fsio_join_paths function.
+* New fsio_file_size function.
+* New fsio_read_text_file_with_options function.
+* Improved input validation for more stable API.
 * Added cargo-make makefile for simpler sharing of optional development build instructions.
 
 ### v0.1.6 (2020-12-27)

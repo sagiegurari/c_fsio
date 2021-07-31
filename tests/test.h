@@ -10,6 +10,7 @@ void test_fail();
 void assert_true(bool);
 
 void assert_string_equal(char *, char *);
+void assert_num_equal(long, long);
 
 void assert_mode_equal(mode_t, mode_t);
 
