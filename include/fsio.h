@@ -5,6 +5,23 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+enum FsIOError
+{
+  FSIO_ERROR_INVALID_INPUT,
+  FSIO_ERROR_PATH_NOT_FOUND,
+  FSIO_ERROR_COPY_FAILED,
+};
+
+struct FsIOResult
+{
+  // True if valid result, false for error
+  bool done;
+  // 0 for no error, otherwise the error number
+  int  error;
+  // If true, error points to FsIOErrors, otherwise C errors
+  bool fsio_error;
+};
+
 struct FsIORecursiveCallbackInfo
 {
   void *context;
@@ -106,11 +123,11 @@ bool fsio_move_file(char * /* source */, char * /* target */);
 /**
  * Moves the source file content to the target file, deleting any previous
  * content in the target file.
- * In case of an error, this function will return false.
+ * In case of an error, this function will return the error code, otherwise it will return done=true.
  * In case of file move via copy (in case of different file systems) the
  * new file will have current user owner and group and default permissions.
  */
-bool fsio_move_file_with_options(char * /* source */, char * /* target */, struct FsIOMoveFileOptions);
+struct FsIOResult fsio_move_file_with_options(char * /* source */, char * /* target */, struct FsIOMoveFileOptions);
 
 /**
  * Will join the provided paths and return a new allocated string with

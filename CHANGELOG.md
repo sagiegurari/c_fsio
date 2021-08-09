@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.2.0 (2021-08-07)
+
+* Enhancement: fsio_move_file_with_options will return the error number instead of true/false.
+
 ### v0.1.7 (2021-07-31)
 
 * New fsio_join_paths function.

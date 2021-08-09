@@ -200,27 +200,42 @@ bool fsio_move_file(char *source, char *target)
   options.write_retries          = 0;
   options.retry_interval_seconds = 0;
 
-  return(fsio_move_file_with_options(source, target, options));
+  struct FsIOResult result = fsio_move_file_with_options(source, target, options);
+
+  return(result.done);
 }
 
 
-bool fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFileOptions options)
+struct FsIOResult fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFileOptions options)
 {
-  if (target == NULL || !fsio_file_exists(source))
+  struct FsIOResult result = { .done = false, .error = 0, .fsio_error = true };
+
+  if (source == NULL || target == NULL)
   {
-    return(false);
+    result.error = FSIO_ERROR_INVALID_INPUT;
+    return(result);
+  }
+  if (!fsio_file_exists(source))
+  {
+    result.error = FSIO_ERROR_PATH_NOT_FOUND;
+    return(result);
   }
 
   if (!options.force_copy)
   {
-    if (!rename(source, target))
+    int out = rename(source, target);
+    if (!out)
     {
-      return(true);
+      result.done = true;
+      return(result);
     }
 
-    if (errno != EXDEV)
+    result.error      = out;
+    result.fsio_error = false;
+
+    if (out != EXDEV)
     {
-      return(false);
+      return(result);
     }
   }
 
@@ -233,8 +248,18 @@ bool fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFile
     fsio_remove(source);
   }
 
-  return(copy_done);
-}
+  result.done = copy_done;
+  if (result.done)
+  {
+    result.error = 0;
+  }
+  else
+  {
+    result.error = FSIO_ERROR_COPY_FAILED;
+  }
+
+  return(result);
+} /* fsio_move_file_with_options */
 
 
 char *fsio_join_paths(char *path1, char *path2)

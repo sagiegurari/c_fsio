@@ -13,6 +13,16 @@ void test_impl()
 
   bool exists = fsio_path_exists(file2);
   assert_true(!exists);
+
+  struct FsIOMoveFileOptions options;
+  options.force_copy             = false;
+  options.write_retries          = 0;
+  options.retry_interval_seconds = 0;
+
+  struct FsIOResult result = fsio_move_file_with_options(file1, file2, options);
+
+  assert_true(!result.done);
+  assert_num_equal(result.error, FSIO_ERROR_PATH_NOT_FOUND);
 }
 
 
