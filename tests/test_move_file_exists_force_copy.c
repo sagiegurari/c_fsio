@@ -17,8 +17,8 @@ void test_impl()
   options.write_retries          = 0;
   options.retry_interval_seconds = 0;
 
-  struct FsIOResult result = fsio_move_file_with_options(file1, file2, options);
-  assert_true(result.done);
+  enum FsIOError result = fsio_move_file_with_options(file1, file2, options);
+  assert_num_equal(result, FSIO_ERROR_NONE);
 
   char *text = fsio_read_text_file(file2);
 

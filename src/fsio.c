@@ -200,42 +200,33 @@ bool fsio_move_file(char *source, char *target)
   options.write_retries          = 0;
   options.retry_interval_seconds = 0;
 
-  struct FsIOResult result = fsio_move_file_with_options(source, target, options);
+  enum FsIOError error = fsio_move_file_with_options(source, target, options);
 
-  return(result.done);
+  return(error == FSIO_ERROR_NONE);
 }
 
 
-struct FsIOResult fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFileOptions options)
+enum FsIOError fsio_move_file_with_options(char *source, char *target, struct FsIOMoveFileOptions options)
 {
-  struct FsIOResult result = { .done = false, .error = 0, .fsio_error = true };
-
   if (source == NULL || target == NULL)
   {
-    result.error = FSIO_ERROR_INVALID_INPUT;
-    return(result);
+    return(FSIO_ERROR_INVALID_INPUT);
   }
   if (!fsio_file_exists(source))
   {
-    result.error = FSIO_ERROR_PATH_NOT_FOUND;
-    return(result);
+    return(FSIO_ERROR_PATH_NOT_FOUND);
   }
 
   if (!options.force_copy)
   {
-    int out = rename(source, target);
-    if (!out)
+    if (!rename(source, target))
     {
-      result.done = true;
-      return(result);
+      return(FSIO_ERROR_NONE);
     }
 
-    result.error      = out;
-    result.fsio_error = false;
-
-    if (out != EXDEV)
+    if (errno != EXDEV)
     {
-      return(result);
+      return(FSIO_ERROR_SEE_ERRNO);
     }
   }
 
@@ -248,17 +239,12 @@ struct FsIOResult fsio_move_file_with_options(char *source, char *target, struct
     fsio_remove(source);
   }
 
-  result.done = copy_done;
-  if (result.done)
+  if (!copy_done)
   {
-    result.error = 0;
-  }
-  else
-  {
-    result.error = FSIO_ERROR_COPY_FAILED;
+    return(FSIO_ERROR_COPY_FAILED);
   }
 
-  return(result);
+  return(FSIO_ERROR_NONE);
 } /* fsio_move_file_with_options */
 
 

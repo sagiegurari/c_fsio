@@ -1,8 +1,12 @@
 ## CHANGELOG
 
-### v0.2.0 (2021-08-07)
+### v0.3.0 (2021-08-09)
 
-* Enhancement: fsio_move_file_with_options will return the error number instead of true/false.
+* Enhancement: fsio_move_file_with_options will return the error number enum instead of struct.
+
+### v0.2.0 (2021-08-09)
+
+* Enhancement: fsio_move_file_with_options will return the error number struct instead of true/false.
 
 ### v0.1.7 (2021-07-31)
 

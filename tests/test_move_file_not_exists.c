@@ -19,10 +19,9 @@ void test_impl()
   options.write_retries          = 0;
   options.retry_interval_seconds = 0;
 
-  struct FsIOResult result = fsio_move_file_with_options(file1, file2, options);
+  enum FsIOError result = fsio_move_file_with_options(file1, file2, options);
 
-  assert_true(!result.done);
-  assert_num_equal(result.error, FSIO_ERROR_PATH_NOT_FOUND);
+  assert_num_equal(result, FSIO_ERROR_PATH_NOT_FOUND);
 }
 
 

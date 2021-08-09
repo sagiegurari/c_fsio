@@ -7,19 +7,16 @@
 
 enum FsIOError
 {
-  FSIO_ERROR_INVALID_INPUT,
-  FSIO_ERROR_PATH_NOT_FOUND,
-  FSIO_ERROR_COPY_FAILED,
-};
-
-struct FsIOResult
-{
-  // True if valid result, false for error
-  bool done;
-  // 0 for no error, otherwise the error number
-  int  error;
-  // If true, error points to FsIOErrors, otherwise C errors
-  bool fsio_error;
+  // not an error
+  FSIO_ERROR_NONE           = 0,
+  // error should be checked via errno
+  FSIO_ERROR_SEE_ERRNO      = 1,
+  // invalid input such as NULL or invalid path
+  FSIO_ERROR_INVALID_INPUT  = 2,
+  // path to file/dir not found
+  FSIO_ERROR_PATH_NOT_FOUND = 3,
+  // general error in copy
+  FSIO_ERROR_COPY_FAILED    = 4,
 };
 
 struct FsIORecursiveCallbackInfo
@@ -123,11 +120,11 @@ bool fsio_move_file(char * /* source */, char * /* target */);
 /**
  * Moves the source file content to the target file, deleting any previous
  * content in the target file.
- * In case of an error, this function will return the error code, otherwise it will return done=true.
+ * In case of an error, this function will return the error code, otherwise it will return 0.
  * In case of file move via copy (in case of different file systems) the
  * new file will have current user owner and group and default permissions.
  */
-struct FsIOResult fsio_move_file_with_options(char * /* source */, char * /* target */, struct FsIOMoveFileOptions);
+enum FsIOError fsio_move_file_with_options(char * /* source */, char * /* target */, struct FsIOMoveFileOptions);
 
 /**
  * Will join the provided paths and return a new allocated string with

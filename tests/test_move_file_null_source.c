@@ -16,10 +16,9 @@ void test_impl()
   options.write_retries          = 0;
   options.retry_interval_seconds = 0;
 
-  struct FsIOResult result = fsio_move_file_with_options(NULL, "./test.txt", options);
+  enum FsIOError result = fsio_move_file_with_options(NULL, "./test.txt", options);
 
-  assert_true(!result.done);
-  assert_num_equal(result.error, FSIO_ERROR_INVALID_INPUT);
+  assert_num_equal(result, FSIO_ERROR_INVALID_INPUT);
 }
 
 
