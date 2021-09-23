@@ -13,7 +13,8 @@ const mode_t FSIO_MODE_ALL = S_IRWXU | S_IRWXG | S_IRWXO;
 
 
 bool _fsio_load_stat(char *, struct stat *);
-bool _fsio_write_text_file(char *, char *, char *);
+bool _fsio_write_file(char *, char *, char *);
+char *_fsio_read_file_with_options(char *, char *, struct FsIOReadFileOptions);
 bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo);
 bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo);
 bool _fsio_recursive_operation(char *, bool (*callback)(struct FsIORecursiveCallbackInfo), void *, struct StringBuffer *);
@@ -26,7 +27,7 @@ long fsio_file_size(char *file)
     return(-1);
   }
 
-  FILE *fp = fopen(file, "r");
+  FILE *fp = fopen(file, "rb");
   if (fp == NULL)
   {
     return(-1);
@@ -48,19 +49,19 @@ long fsio_file_size(char *file)
 
 bool fsio_write_text_file(char *file, char *text)
 {
-  return(_fsio_write_text_file(file, text, "w"));
+  return(_fsio_write_file(file, text, "w"));
 }
 
 
 bool fsio_append_text_file(char *file, char *text)
 {
-  return(_fsio_write_text_file(file, text, "a"));
+  return(_fsio_write_file(file, text, "a"));
 }
 
 
 char *fsio_read_text_file(char *file)
 {
-  struct FsIOReadTextFileOptions options;
+  struct FsIOReadFileOptions options;
 
   options.max_read_limit = 0;
   options.tail           = false;
@@ -69,52 +70,39 @@ char *fsio_read_text_file(char *file)
 }
 
 
-char *fsio_read_text_file_with_options(char *file, struct FsIOReadTextFileOptions options)
+char *fsio_read_text_file_with_options(char *file, struct FsIOReadFileOptions options)
 {
-  long file_size = fsio_file_size(file);
+  return(_fsio_read_file_with_options(file, "r", options));
+}
 
-  if (file_size < 0)
-  {
-    return(NULL);
-  }
-  if (!file_size)
-  {
-    return(strdup(""));
-  }
 
-  FILE *fp = fopen(file, "r");
-  if (fp == NULL)
-  {
-    return(NULL);
-  }
+bool fsio_write_binary_file(char *file, char *content)
+{
+  return(_fsio_write_file(file, content, "wb"));
+}
 
-  long left_to_read = file_size;
-  if (options.max_read_limit > 0 && left_to_read > options.max_read_limit)
-  {
-    left_to_read = options.max_read_limit;
 
-    if (options.tail)
-    {
-      fseek(fp, (-1) * left_to_read, SEEK_END);
-    }
-  }
+bool fsio_append_binary_file(char *file, char *content)
+{
+  return(_fsio_write_file(file, content, "ab"));
+}
 
-  int                 character;
-  struct StringBuffer *buffer = string_buffer_new();
-  while ((character = getc(fp)) != EOF && left_to_read > 0)
-  {
-    string_buffer_append(buffer, (char)character);
-    left_to_read--;
-  }
 
-  fclose(fp);
+char *fsio_read_binary_file(char *file)
+{
+  struct FsIOReadFileOptions options;
 
-  char *text = string_buffer_to_string(buffer);
+  options.max_read_limit = 0;
+  options.tail           = false;
 
-  string_buffer_release(buffer);
+  return(fsio_read_binary_file_with_options(file, options));
+}
 
-  return(text);
-} /* fsio_read_text_file_with_options */
+
+char *fsio_read_binary_file_with_options(char *file, struct FsIOReadFileOptions options)
+{
+  return(_fsio_read_file_with_options(file, "rb", options));
+}
 
 
 bool fsio_create_empty_file(char *file)
@@ -488,9 +476,9 @@ bool _fsio_load_stat(char *path, struct stat *info)
 }
 
 
-bool _fsio_write_text_file(char *file, char *text, char *mode)
+bool _fsio_write_file(char *file, char *content, char *mode)
 {
-  if (file == NULL || text == NULL)
+  if (file == NULL || content == NULL)
   {
     return(false);
   }
@@ -507,7 +495,7 @@ bool _fsio_write_text_file(char *file, char *text, char *mode)
     return(false);
   }
 
-  if (fputs(text, fp) == EOF)
+  if (fputs(content, fp) == EOF)
   {
     fclose(fp);
 
@@ -522,6 +510,54 @@ bool _fsio_write_text_file(char *file, char *text, char *mode)
 
   return(true);
 }
+
+
+char *_fsio_read_file_with_options(char *file, char *mode, struct FsIOReadFileOptions options)
+{
+  long file_size = fsio_file_size(file);
+
+  if (file_size < 0)
+  {
+    return(NULL);
+  }
+  if (!file_size)
+  {
+    return(strdup(""));
+  }
+
+  FILE *fp = fopen(file, mode);
+  if (fp == NULL)
+  {
+    return(NULL);
+  }
+
+  long left_to_read = file_size;
+  if (options.max_read_limit > 0 && left_to_read > options.max_read_limit)
+  {
+    left_to_read = options.max_read_limit;
+
+    if (options.tail)
+    {
+      fseek(fp, (-1) * left_to_read, SEEK_END);
+    }
+  }
+
+  int                 character;
+  struct StringBuffer *buffer = string_buffer_new();
+  while ((character = getc(fp)) != EOF && left_to_read > 0)
+  {
+    string_buffer_append(buffer, (char)character);
+    left_to_read--;
+  }
+
+  fclose(fp);
+
+  char *text = string_buffer_to_string(buffer);
+
+  string_buffer_release(buffer);
+
+  return(text);
+} /* _fsio_read_file_with_options */
 
 
 bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo info)

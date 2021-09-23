@@ -26,7 +26,7 @@ struct FsIORecursiveCallbackInfo
   bool is_file;
 };
 
-struct FsIOReadTextFileOptions
+struct FsIOReadFileOptions
 {
   // the limit to read. 0 or negative value for no limit.
   long max_read_limit;
@@ -86,7 +86,34 @@ char *fsio_read_text_file(char * /* file */);
  * Reads and returns the text from the provided file.
  * In case of any error or invalid input, this function will return NULL.
  */
-char *fsio_read_text_file_with_options(char * /* file */, struct FsIOReadTextFileOptions);
+char *fsio_read_text_file_with_options(char * /* file */, struct FsIOReadFileOptions);
+
+/**
+ * Writes the provided content into the file, deleting any previous content.
+ * In case of any error or invalid input, this function will return false.
+ * If parent directories do not exist, they will be created.
+ */
+bool fsio_write_binary_file(char * /* file */, char * /* binary */);
+
+/**
+ * Writes the provided binary into the file, appending if file already exists.
+ * In case of any error or invalid input, this function will return false.
+ * If parent directories do not exist, they will be created.
+ */
+bool fsio_append_binary_file(char * /* file */, char * /* binary */);
+
+/**
+ * Reads and returns the binary from the provided file.
+ * In case of any error or invalid input, this function will return NULL.
+ */
+char *fsio_read_binary_file(char * /* file */);
+
+/**
+ * Reads and returns the binary from the provided file.
+ * In case of any error or invalid input, this function will return NULL.
+ */
+char *fsio_read_binary_file_with_options(char * /* file */, struct FsIOReadFileOptions);
+
 
 /**
  * Creates an empty file for the provided path.

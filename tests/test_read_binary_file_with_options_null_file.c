@@ -9,7 +9,7 @@ void test_impl()
   options.max_read_limit = 0;
   options.tail           = false;
 
-  char *text = fsio_read_text_file_with_options("./bad.txt", options);
+  char *text = fsio_read_binary_file_with_options(NULL, options);
 
   assert_true(text == NULL);
 }

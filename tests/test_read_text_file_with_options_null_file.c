@@ -4,7 +4,7 @@
 
 void test_impl()
 {
-  struct FsIOReadTextFileOptions options;
+  struct FsIOReadFileOptions options;
 
   options.max_read_limit = 0;
   options.tail           = false;

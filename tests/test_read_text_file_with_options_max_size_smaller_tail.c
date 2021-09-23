@@ -6,12 +6,12 @@
 
 void test_impl()
 {
-  char *file = "./read_text_file_with_optoins_max_size_smaller_tail.txt";
+  char *file = "./read_text_file_with_options_max_size_smaller_tail.txt";
   bool done  = fsio_write_text_file(file, "123456789");
 
   assert_true(done);
 
-  struct FsIOReadTextFileOptions options;
+  struct FsIOReadFileOptions options;
 
   options.max_read_limit = 3;
   options.tail           = true;

@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.4.0 (2021-09-24)
+
+* Enhancement: New binary file operations.
+
 ### v0.3.0 (2021-08-09)
 
 * Enhancement: fsio_move_file_with_options will return the error number enum instead of struct.

@@ -6,17 +6,17 @@
 
 void test_impl()
 {
-  char *file = "./read_text_file_with_options_max_size_bigger_tail.txt";
-  bool done  = fsio_write_text_file(file, "123456789");
+  char *file = "./read_binary_file_with_options_max_size_same.bin";
+  bool done  = fsio_write_binary_file(file, "123456789");
 
   assert_true(done);
 
   struct FsIOReadFileOptions options;
 
-  options.max_read_limit = 100;
-  options.tail           = true;
+  options.max_read_limit = 9;
+  options.tail           = false;
 
-  char *text = fsio_read_text_file_with_options(file, options);
+  char *text = fsio_read_binary_file_with_options(file, options);
 
   remove(file);
 
