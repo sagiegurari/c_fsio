@@ -107,7 +107,7 @@ char *fsio_read_binary_file_with_options(char *file, struct FsIOReadFileOptions 
 
 bool fsio_create_empty_file(char *file)
 {
-  return(fsio_write_text_file(file, ""));
+  return(fsio_write_binary_file(file, ""));
 }
 
 
