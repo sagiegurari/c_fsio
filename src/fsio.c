@@ -501,7 +501,6 @@ bool _fsio_write_file(char *file, char *content, char *mode, bool is_text, size_
   }
 
   size_t written = fwrite(content, 1, length, fp);
-  printf("written: %d len: %d\n", written, length);//todo re
   if (written < length)
   {
     fclose(fp);
