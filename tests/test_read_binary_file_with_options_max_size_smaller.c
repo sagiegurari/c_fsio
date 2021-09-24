@@ -7,7 +7,7 @@
 void test_impl()
 {
   char *file = "./read_binary_file_with_options_max_size_smaller.bin";
-  bool done  = fsio_write_binary_file(file, "123456789");
+  bool done  = fsio_write_binary_file(file, "123456789", 9);
 
   assert_true(done);
 

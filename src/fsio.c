@@ -8,12 +8,12 @@
 #include <string.h>
 #include <unistd.h>
 
+#define FSIO_READ_BUFFER_SIZE    1024
 
 const mode_t FSIO_MODE_ALL = S_IRWXU | S_IRWXG | S_IRWXO;
 
-
 bool _fsio_load_stat(char *, struct stat *);
-bool _fsio_write_file(char *, char *, char *);
+bool _fsio_write_file(char *, char *, char *, bool, size_t);
 char *_fsio_read_file_with_options(char *, char *, struct FsIOReadFileOptions);
 bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo);
 bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo);
@@ -49,13 +49,13 @@ long fsio_file_size(char *file)
 
 bool fsio_write_text_file(char *file, char *text)
 {
-  return(_fsio_write_file(file, text, "w"));
+  return(_fsio_write_file(file, text, "w", true, 0));
 }
 
 
 bool fsio_append_text_file(char *file, char *text)
 {
-  return(_fsio_write_file(file, text, "a"));
+  return(_fsio_write_file(file, text, "a", true, 0));
 }
 
 
@@ -76,15 +76,15 @@ char *fsio_read_text_file_with_options(char *file, struct FsIOReadFileOptions op
 }
 
 
-bool fsio_write_binary_file(char *file, char *content)
+bool fsio_write_binary_file(char *file, char *content, size_t length)
 {
-  return(_fsio_write_file(file, content, "wb"));
+  return(_fsio_write_file(file, content, "wb", false, length));
 }
 
 
-bool fsio_append_binary_file(char *file, char *content)
+bool fsio_append_binary_file(char *file, char *content, size_t length)
 {
-  return(_fsio_write_file(file, content, "ab"));
+  return(_fsio_write_file(file, content, "ab", false, length));
 }
 
 
@@ -107,7 +107,7 @@ char *fsio_read_binary_file_with_options(char *file, struct FsIOReadFileOptions 
 
 bool fsio_create_empty_file(char *file)
 {
-  return(fsio_write_binary_file(file, ""));
+  return(fsio_write_binary_file(file, "", 0));
 }
 
 
@@ -476,11 +476,16 @@ bool _fsio_load_stat(char *path, struct stat *info)
 }
 
 
-bool _fsio_write_file(char *file, char *content, char *mode)
+bool _fsio_write_file(char *file, char *content, char *mode, bool is_text, size_t length)
 {
   if (file == NULL || content == NULL)
   {
     return(false);
+  }
+
+  if (is_text)
+  {
+    length = strlen(content);
   }
 
   bool directory_created = fsio_mkdirs_parent(file, FSIO_MODE_ALL);
@@ -495,7 +500,9 @@ bool _fsio_write_file(char *file, char *content, char *mode)
     return(false);
   }
 
-  if (fputs(content, fp) == EOF)
+  size_t written = fwrite(content, 1, length, fp);
+  printf("written: %d len: %d\n", written, length);//todo re
+  if (written < length)
   {
     fclose(fp);
 
@@ -542,13 +549,33 @@ char *_fsio_read_file_with_options(char *file, char *mode, struct FsIOReadFileOp
     }
   }
 
-  int                 character;
-  struct StringBuffer *buffer = string_buffer_new();
-  while ((character = getc(fp)) != EOF && left_to_read > 0)
+  struct StringBuffer *buffer                          = string_buffer_new();
+  char                io_buffer[FSIO_READ_BUFFER_SIZE] = { 0 };
+  do
   {
-    string_buffer_append(buffer, (char)character);
-    left_to_read--;
-  }
+    if (feof(fp))
+    {
+      break;
+    }
+
+    long to_read = FSIO_READ_BUFFER_SIZE;
+    if (to_read > left_to_read)
+    {
+      to_read = left_to_read;
+    }
+
+    size_t read = fread(io_buffer, 1, (size_t)to_read, fp);
+    if (read <= 0)
+    {
+      break;
+    }
+    else
+    {
+      left_to_read = left_to_read - (long)read;
+    }
+
+    string_buffer_append_binary(buffer, io_buffer, 0, read);
+  } while (left_to_read > 0);
 
   fclose(fp);
 

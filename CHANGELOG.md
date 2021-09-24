@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.5.0 (2021-09-24)
+
+* Enhancement: Updated binary file operations.
+
 ### v0.4.0 (2021-09-24)
 
 * Enhancement: New binary file operations.

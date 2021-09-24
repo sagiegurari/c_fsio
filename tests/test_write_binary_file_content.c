@@ -2,13 +2,15 @@
 #include "test.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 void test_impl()
 {
-  char *file = "./write_binary_file_content.bin";
-  bool done  = fsio_write_binary_file(file, "some\ncontent");
-  char *text = fsio_read_binary_file(file);
+  char *file    = "./write_binary_file_content.bin";
+  char *content = "some\ncontent";
+  bool done     = fsio_write_binary_file(file, content, strlen(content));
+  char *text    = fsio_read_binary_file(file);
 
   remove(file);
 

@@ -3,6 +3,7 @@
 #include "test.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 
@@ -23,14 +24,14 @@ void test_impl()
 
   for (unsigned int index = 0; index < 50; index++)
   {
-    bool done  = fsio_write_binary_file(file, content);
+    bool done  = fsio_write_binary_file(file, content, strlen(content));
     char *text = fsio_read_binary_file(file);
 
     assert_true(done);
     assert_string_equal(text, content);
     free(text);
 
-    done = fsio_append_binary_file(file, content);
+    done = fsio_append_binary_file(file, content, strlen(content));
     text = fsio_read_binary_file(file);
 
     remove(file);

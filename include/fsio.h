@@ -93,14 +93,14 @@ char *fsio_read_text_file_with_options(char * /* file */, struct FsIOReadFileOpt
  * In case of any error or invalid input, this function will return false.
  * If parent directories do not exist, they will be created.
  */
-bool fsio_write_binary_file(char * /* file */, char * /* binary */);
+bool fsio_write_binary_file(char * /* file */, char * /* binary */, size_t /* length */);
 
 /**
  * Writes the provided binary into the file, appending if file already exists.
  * In case of any error or invalid input, this function will return false.
  * If parent directories do not exist, they will be created.
  */
-bool fsio_append_binary_file(char * /* file */, char * /* binary */);
+bool fsio_append_binary_file(char * /* file */, char * /* binary */, size_t /* length */);
 
 /**
  * Reads and returns the binary from the provided file.
@@ -113,7 +113,6 @@ char *fsio_read_binary_file(char * /* file */);
  * In case of any error or invalid input, this function will return NULL.
  */
 char *fsio_read_binary_file_with_options(char * /* file */, struct FsIOReadFileOptions);
-
 
 /**
  * Creates an empty file for the provided path.

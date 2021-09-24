@@ -3,6 +3,7 @@
 #include "test.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 
 void test_impl()
@@ -17,7 +18,7 @@ void test_impl()
   string_buffer_release(buffer);
 
   char *file = "./write_binary_file_long_content.bin";
-  bool done  = fsio_write_binary_file(file, content);
+  bool done  = fsio_write_binary_file(file, content, strlen(content));
   char *text = fsio_read_binary_file(file);
 
   remove(file);

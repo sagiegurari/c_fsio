@@ -7,7 +7,7 @@
 void test_impl()
 {
   char *file = "./write_binary_file_empty.bin";
-  bool done  = fsio_write_binary_file(file, "");
+  bool done  = fsio_write_binary_file(file, "", 0);
   char *text = fsio_read_binary_file(file);
 
   remove(file);
