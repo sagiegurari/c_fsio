@@ -236,6 +236,64 @@ enum FsIOError fsio_move_file_with_options(char *source, char *target, struct Fs
 } /* fsio_move_file_with_options */
 
 
+char *fsio_file_extension(char *path)
+{
+  if (path == NULL)
+  {
+    return(NULL);
+  }
+
+  size_t length = strlen(path);
+  if (!length)
+  {
+    return(NULL);
+  }
+
+  size_t extension_index = 0;
+  bool   found           = false;
+  for (size_t index = length - 1; ; index--)
+  {
+    char character = path[index];
+    if (character == '/' || character == '\\')
+    {
+      return(NULL);
+    }
+
+    if (character == '.')
+    {
+      found           = true;
+      extension_index = index;
+      break;
+    }
+
+    if (!index)
+    {
+      break;
+    }
+  }
+
+  if (!found)
+  {
+    return(NULL);
+  }
+
+  size_t extension_length = length - extension_index;
+  if (extension_length <= 1)
+  {
+    return(NULL);
+  }
+
+  char *extension = malloc(sizeof(char) * (extension_length + 1));
+  for (size_t index = 0; index < extension_length; index++)
+  {
+    extension[index] = path[extension_index + index];
+  }
+  extension[extension_length] = '\0';
+
+  return(extension);
+} /* fsio_get_file_extension */
+
+
 char *fsio_join_paths(char *path1, char *path2)
 {
   if (path1 == NULL)

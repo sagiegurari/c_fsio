@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.5.1 (2021-09-26)
+
+* Enhancement: New fsio_file_extension function.
+
 ### v0.5.0 (2021-09-24)
 
 * Enhancement: Updated binary file operations.

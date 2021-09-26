@@ -153,6 +153,13 @@ bool fsio_move_file(char * /* source */, char * /* target */);
 enum FsIOError fsio_move_file_with_options(char * /* source */, char * /* target */, struct FsIOMoveFileOptions);
 
 /**
+ * Will return the file extension (the content after the last . of the last path element).
+ * If no extension is detected, NULL will be returned.
+ * The returned string must be freed once no longer needed.
+ */
+char *fsio_file_extension(char *);
+
+/**
  * Will join the provided paths and return a new allocated string with
  * the result.
  * If needed, a unix style separator will be added.
