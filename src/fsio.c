@@ -129,8 +129,13 @@ bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFile
     return(false);
   }
 
-  FILE *source_fp = fopen(source, "r");
+  long file_size = fsio_file_size(source);
+  if (!file_size)
+  {
+    return(fsio_create_empty_file(target));
+  }
 
+  FILE *source_fp = fopen(source, "r");
   if (source_fp == NULL)
   {
     return(false);
@@ -143,37 +148,60 @@ bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFile
     return(false);
   }
 
-  int          character;
-  bool         delete_file   = false;
-  unsigned int write_retries = options.write_retries + 1;
-  while ((character = getc(source_fp)) != EOF)
+  bool delete_file                      = false;
+  long left_to_read                     = file_size;
+  char io_buffer[FSIO_READ_BUFFER_SIZE] = { 0 };
+  do
   {
-    bool written = false;
-    for (unsigned int index = 0; index < write_retries; index++)
+    if (feof(source_fp))
     {
-      if (fputc(character, target_fp) != EOF)
-      {
-        written = true;
-        break;
-      }
-      else if (options.retry_interval_seconds)
-      {
-        sleep(options.retry_interval_seconds);
-      }
+      break;
     }
 
-    if (!written)
+    long to_read = FSIO_READ_BUFFER_SIZE;
+    if (to_read > left_to_read)
+    {
+      to_read = left_to_read;
+    }
+
+    size_t read = fread(io_buffer, 1, (size_t)to_read, source_fp);
+    if (read <= 0)
     {
       delete_file = true;
       break;
     }
-  }
+    else
+    {
+      left_to_read = left_to_read - (long)read;
+    }
+
+    size_t written = fwrite(io_buffer, 1, read, target_fp);
+    if (written < read)
+    {
+      delete_file = true;
+      break;
+    }
+  } while (left_to_read > 0);
 
   fclose(source_fp);
   fclose(target_fp);
+
   if (delete_file)
   {
     remove(target);
+
+    if (options.write_retries > 0)
+    {
+      if (options.retry_interval_seconds)
+      {
+        sleep(options.retry_interval_seconds);
+      }
+      options.write_retries = options.write_retries - 1;
+
+      return(fsio_copy_file_with_options(source, target, options));
+    }
+
+    return(false);
   }
 
   return(true);

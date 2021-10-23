@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.5.2 (2021-10-23)
+
+* Enhancement: improve copy file performance.
+
 ### v0.5.1 (2021-09-26)
 
 * Enhancement: New fsio_file_extension function.
