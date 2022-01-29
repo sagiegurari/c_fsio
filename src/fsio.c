@@ -12,12 +12,12 @@
 
 const mode_t FSIO_MODE_ALL = S_IRWXU | S_IRWXG | S_IRWXO;
 
-bool _fsio_load_stat(char *, struct stat *);
-bool _fsio_write_file(char *, char *, char *, bool, size_t);
-char *_fsio_read_file_with_options(char *, char *, struct FsIOReadFileOptions);
-bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo);
-bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo);
-bool _fsio_recursive_operation(char *, bool (*callback)(struct FsIORecursiveCallbackInfo), void *, struct StringBuffer *);
+static bool _fsio_load_stat(char *, struct stat *);
+static bool _fsio_write_file(char *, char *, char *, bool, size_t);
+static char *_fsio_read_file_with_options(char *, char *, struct FsIOReadFileOptions);
+static bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo);
+static bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo);
+static bool _fsio_recursive_operation(char *, bool (*callback)(struct FsIORecursiveCallbackInfo), void *, struct StringBuffer *);
 
 
 long fsio_file_size(char *file)
@@ -546,7 +546,7 @@ bool fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveC
 }
 
 
-bool _fsio_load_stat(char *path, struct stat *info)
+static bool _fsio_load_stat(char *path, struct stat *info)
 {
   if (path == NULL)
   {
@@ -562,7 +562,7 @@ bool _fsio_load_stat(char *path, struct stat *info)
 }
 
 
-bool _fsio_write_file(char *file, char *content, char *mode, bool is_text, size_t length)
+static bool _fsio_write_file(char *file, char *content, char *mode, bool is_text, size_t length)
 {
   if (file == NULL || content == NULL)
   {
@@ -604,7 +604,7 @@ bool _fsio_write_file(char *file, char *content, char *mode, bool is_text, size_
 }
 
 
-char *_fsio_read_file_with_options(char *file, char *mode, struct FsIOReadFileOptions options)
+static char *_fsio_read_file_with_options(char *file, char *mode, struct FsIOReadFileOptions options)
 {
   long file_size = fsio_file_size(file);
 
@@ -672,13 +672,13 @@ char *_fsio_read_file_with_options(char *file, char *mode, struct FsIOReadFileOp
 } /* _fsio_read_file_with_options */
 
 
-bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo info)
+static bool _fsio_remove_callback(struct FsIORecursiveCallbackInfo info)
 {
   return(remove(info.path) == 0);
 }
 
 
-bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo info)
+static bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo info)
 {
   mode_t *mode = (mode_t *)info.context;
 
@@ -686,7 +686,7 @@ bool _fsio_chmod_recursive_callback(struct FsIORecursiveCallbackInfo info)
 }
 
 
-bool _fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveCallbackInfo), void *context, struct StringBuffer *buffer)
+static bool _fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveCallbackInfo), void *context, struct StringBuffer *buffer)
 {
   struct FsIORecursiveCallbackInfo info;
 

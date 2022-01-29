@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.5.3
+
+* Added static to internal functions
+
 ### v0.5.2 (2021-10-23)
 
 * Enhancement: improve copy file performance.
