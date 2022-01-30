@@ -1,8 +1,10 @@
 ## CHANGELOG
 
-### v0.5.3
+### v0.5.3 (2022-01-30)
 
+* Fixed minor allocation issue in fsio_join_paths
 * Added static to internal functions
+* Adding lint checks as part of build
 
 ### v0.5.2 (2021-10-23)
 

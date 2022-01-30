@@ -165,7 +165,7 @@ bool fsio_copy_file_with_options(char *source, char *target, struct FsIOCopyFile
     }
 
     size_t read = fread(io_buffer, 1, (size_t)to_read, source_fp);
-    if (read <= 0)
+    if (!read)
     {
       delete_file = true;
       break;
@@ -364,7 +364,7 @@ char *fsio_join_paths(char *path1, char *path2)
     concat_len = concat_len - 1;
   }
 
-  char *concat_path = malloc(sizeof(char *) * (concat_len + 1));
+  char *concat_path = malloc(sizeof(char) * (concat_len + 1));
 
   for (size_t index = 0; index < len1; index++)
   {
@@ -650,7 +650,7 @@ static char *_fsio_read_file_with_options(char *file, char *mode, struct FsIORea
     }
 
     size_t read = fread(io_buffer, 1, (size_t)to_read, fp);
-    if (read <= 0)
+    if (!read)
     {
       break;
     }
