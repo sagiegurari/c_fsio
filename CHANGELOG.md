@@ -2,7 +2,7 @@
 
 ### v0.5.4
 
-* Maintenance: Update string_buffer_dependency
+* Maintenance: Update string_buffer dependency
 
 ### v0.5.3 (2022-01-30)
 
