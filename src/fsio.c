@@ -1,5 +1,5 @@
 #include "fsio.h"
-#include "string_buffer.h"
+#include "stringbuffer.h"
 #include <dirent.h>
 #include <errno.h>
 #include <libgen.h>
@@ -538,9 +538,9 @@ bool fsio_recursive_operation(char *path, bool (*callback)(struct FsIORecursiveC
     return(false);
   }
 
-  struct StringBuffer *buffer = string_buffer_new();
+  struct StringBuffer *buffer = stringbuffer_new();
   bool                done    = _fsio_recursive_operation(path, callback, context, buffer);
-  string_buffer_release(buffer);
+  stringbuffer_release(buffer);
 
   return(done);
 }
@@ -634,7 +634,7 @@ static char *_fsio_read_file_with_options(char *file, char *mode, struct FsIORea
     }
   }
 
-  struct StringBuffer *buffer                          = string_buffer_new();
+  struct StringBuffer *buffer                          = stringbuffer_new();
   char                io_buffer[FSIO_READ_BUFFER_SIZE] = { 0 };
   do
   {
@@ -659,14 +659,14 @@ static char *_fsio_read_file_with_options(char *file, char *mode, struct FsIORea
       left_to_read = left_to_read - (long)read;
     }
 
-    string_buffer_append_binary(buffer, io_buffer, 0, read);
+    stringbuffer_append_binary(buffer, io_buffer, 0, read);
   } while (left_to_read > 0);
 
   fclose(fp);
 
-  char *text = string_buffer_to_string(buffer);
+  char *text = stringbuffer_to_string(buffer);
 
-  string_buffer_release(buffer);
+  stringbuffer_release(buffer);
 
   return(text);
 } /* _fsio_read_file_with_options */
@@ -716,12 +716,12 @@ static bool _fsio_recursive_operation(char *path, bool (*callback)(struct FsIORe
         continue;
       }
 
-      string_buffer_append_string(buffer, path);
-      string_buffer_append(buffer, '/');
-      string_buffer_append_string(buffer, entry->d_name);
+      stringbuffer_append_string(buffer, path);
+      stringbuffer_append(buffer, '/');
+      stringbuffer_append_string(buffer, entry->d_name);
 
-      char *entry_path = string_buffer_to_string(buffer);
-      string_buffer_clear(buffer);
+      char *entry_path = stringbuffer_to_string(buffer);
+      stringbuffer_clear(buffer);
 
       bool done = false;
       if (fsio_dir_exists(entry_path))

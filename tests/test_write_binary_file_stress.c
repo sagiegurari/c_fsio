@@ -1,5 +1,5 @@
 #include "fsio.h"
-#include "string_buffer.h"
+#include "stringbuffer.h"
 #include "test.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,16 +9,16 @@
 
 void test_impl()
 {
-  struct StringBuffer *buffer = string_buffer_new();
+  struct StringBuffer *buffer = stringbuffer_new();
 
   for (unsigned int index = 0; index < 1000; index++)
   {
-    string_buffer_append_string(buffer, "another line of content.\n");
+    stringbuffer_append_string(buffer, "another line of content.\n");
   }
-  char *content = string_buffer_to_string(buffer);
-  string_buffer_append_string(buffer, content);
-  char *double_content = string_buffer_to_string(buffer);
-  string_buffer_release(buffer);
+  char *content = stringbuffer_to_string(buffer);
+  stringbuffer_append_string(buffer, content);
+  char *double_content = stringbuffer_to_string(buffer);
+  stringbuffer_release(buffer);
 
   char *file = "./stress1/stress2/write_binary_file_stress.bin";
 
