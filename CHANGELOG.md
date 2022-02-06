@@ -1,5 +1,9 @@
 ## CHANGELOG
 
+### v0.5.4
+
+* Maintenance: Update string_buffer_dependency
+
 ### v0.5.3 (2022-01-30)
 
 * Fixed minor allocation issue in fsio_join_paths
