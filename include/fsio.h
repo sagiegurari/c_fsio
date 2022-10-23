@@ -1,5 +1,5 @@
-#ifndef __FSIO_H__
-#define __FSIO_H__
+#ifndef FSIO_H
+#define FSIO_H
 
 #include <stdbool.h>
 #include <sys/stat.h>

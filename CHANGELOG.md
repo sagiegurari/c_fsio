@@ -3,6 +3,7 @@
 ### v0.5.4
 
 * Maintenance: Update string_buffer dependency
+* Updated header include guard macro name
 
 ### v0.5.3 (2022-01-30)
 
