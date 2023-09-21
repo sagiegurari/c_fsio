@@ -20,6 +20,7 @@ This includes writing/append text files with automatic directory creation, creat
 <a name="usage"></a>
 ## Usage
 
+<!-- example source start -->
 ```c
 #include "fsio.h"
 #include <stdbool.h>
@@ -51,6 +52,7 @@ int main()
   printf("Deleted somedir and all content.\n");
 }
 ```
+<!-- example source end -->
 
 ## Contributing
 See [contributing guide](.github/CONTRIBUTING.md)
